@@ -136,6 +136,7 @@ const gs = {
   dragOffX: 0,
   dragOffY: 0,
   gameOver: false,
+  gameOverReason: "",
   clearAnim: 0,
   fireParticles: [],
   holeAngle: 0,
@@ -264,6 +265,7 @@ function gameLoop(now) {
     if (gs.timer <= 0) {
       gs.timer = 0;
       gs.gameOver = true;
+      gs.gameOverReason = "It's taking too long.";
       playFail();
       triggerFlash("#ff0000");
     }
@@ -501,10 +503,14 @@ function drawGameOver() {
   ctx.font = `bold ${Math.min(W() * 0.12, 48)}px Arial`;
   ctx.fillText("GAME OVER", W() / 2, H() * 0.35);
 
+  ctx.fillStyle = "#FF9800";
+  ctx.font = `italic ${Math.min(W() * 0.05, 20)}px Arial`;
+  ctx.fillText(gs.gameOverReason, W() / 2, H() * 0.42);
+
   ctx.fillStyle = "#ccc";
   ctx.font = `${Math.min(W() * 0.045, 18)}px Arial`;
-  ctx.fillText(`クリア数: ${gs.totalClears}`, W() / 2, H() * 0.45);
-  ctx.fillText(`到達レベル: ${gs.level}`, W() / 2, H() * 0.52);
+  ctx.fillText(`クリア数: ${gs.totalClears}`, W() / 2, H() * 0.5);
+  ctx.fillText(`到達レベル: ${gs.level}`, W() / 2, H() * 0.57);
 
   const bw = Math.min(W() * 0.5, 200),
     bh = H() * 0.07;
@@ -704,6 +710,7 @@ function handleTap(e) {
   if (Math.sqrt(dx * dx + dy * dy) < size * 0.8) {
     if (gs.rotations >= 4) {
       gs.gameOver = true;
+      gs.gameOverReason = "Spinning too much.";
       playFail();
       triggerFlash("#ff0000");
       return;
